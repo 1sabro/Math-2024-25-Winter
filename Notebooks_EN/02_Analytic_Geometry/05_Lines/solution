@@ -1,0 +1,85 @@
+import sympy as sp
+
+def equation_through_two_points(A, B):
+    x, y = sp.symbols('x y')
+    slope = (B[1] - A[1]) / (B[0] - A[0])
+    line_eq = sp.Eq(y, slope * (x - A[0]) + A[1])
+    return line_eq
+
+def equation_parallel_to_line(point, line_eq):
+    x, y = sp.symbols('x y')
+    slope = sp.simplify(line_eq.rhs.diff(x))
+    new_line_eq = sp.Eq(y, slope * (x - point[0]) + point[1])
+    return new_line_eq
+
+def equation_perpendicular_to_line(point, line_eq):
+    x, y = sp.symbols('x y')
+    slope = sp.simplify(line_eq.rhs.diff(x))
+    perp_slope = -1 / slope
+    new_line_eq = sp.Eq(y, perp_slope * (x - point[0]) + point[1])
+    return new_line_eq
+
+def intersection_and_angle(line1, line2):
+    x, y = sp.symbols('x y')
+    intersection = sp.solve([line1, line2], (x, y))
+    slope1 = sp.simplify(line1.rhs.diff(x))
+    slope2 = sp.simplify(line2.rhs.diff(x))
+    tan_theta = abs((slope2 - slope1) / (1 + slope1 * slope2))
+    angle = sp.atan(tan_theta) * (180 / sp.pi)
+    return intersection, angle
+
+def equation_parallel_to_vector(point, vector):
+    x, y = sp.symbols('x y')
+    slope = vector[1] / vector[0]
+    line_eq = sp.Eq(y, slope * (x - point[0]) + point[1])
+    return line_eq
+
+def example_parallel_perpendicular(line_eq):
+    x, y = sp.symbols('x y')
+    slope = sp.simplify(line_eq.rhs.diff(x))
+    parallel_line = sp.Eq(y, slope * x + 1)
+    perp_line = sp.Eq(y, -1 / slope * x + 1)
+    return parallel_line, perp_line
+
+def distance_point_to_line(point, line_eq):
+    x, y = sp.symbols('x y')
+    A, B, C = sp.simplify(line_eq.lhs.coeff(x)), sp.simplify(line_eq.lhs.coeff(y)), sp.simplify(line_eq.lhs - line_eq.lhs.coeff(x)*x - line_eq.lhs.coeff(y)*y)
+    distance = abs(A * point[0] + B * point[1] + C) / sp.sqrt(A**2 + B**2)
+    return distance
+
+def line_from_intercepts(A, B):
+    x, y = sp.symbols('x y')
+    slope = (B[1] - A[1]) / (B[0] - A[0])
+    line_eq = sp.Eq(y, slope * (x - A[0]) + A[1])
+    return line_eq
+
+def angle_with_x_axis(line_eq):
+    x = sp.symbols('x')
+    slope = sp.simplify(line_eq.rhs.diff(x))
+    angle = sp.atan(slope) * (180 / sp.pi)
+    return angle
+
+def vector_perpendicular_to_line(line_eq):
+    x, y = sp.symbols('x y')
+    A = sp.simplify(line_eq.lhs.coeff(x))
+    B = sp.simplify(line_eq.lhs.coeff(y))
+    perp_vector = sp.Matrix([-B, A])
+    return perp_vector
+
+A = (1, 2)
+B = (3, 4)
+line_eq = sp.Eq(sp.symbols('y'), 2 * sp.symbols('x') + 3)
+vector = [2, 3]
+
+print(equation_through_two_points(A, B))
+print(equation_parallel_to_line(A, line_eq))
+print(equation_perpendicular_to_line(A, line_eq))
+intersection, angle = intersection_and_angle(line_eq, sp.Eq(sp.symbols('y'), 3 * sp.symbols('x') + 2))
+print(intersection, angle)
+print(equation_parallel_to_vector(A, vector))
+parallel_line, perp_line = example_parallel_perpendicular(line_eq)
+print(parallel_line, perp_line)
+print(distance_point_to_line(A, line_eq))
+print(line_from_intercepts((2, 0), (0, 3)))
+print(angle_with_x_axis(sp.Eq(sp.symbols('y'), sp.symbols('x') + 3)))
+print(vector_perpendicular_to_line(sp.Eq(sp.symbols('x') + sp.symbols('y') + 1, 0)))
